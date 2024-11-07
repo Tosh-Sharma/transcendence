@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15
+    container_name: POSTGRES_DB
+    environment:
+      POSTGRES_USER: superman
+      POSTGRES_PASSWORD: SUPERpassword
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: backend
+    container_name: django
+    command: >
+      sh -c "./wait-for-it.sh database:5432 -- 
+             python manage.py migrate &&
+             gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --certfile=cert.pem --keyfile=key.pem"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
