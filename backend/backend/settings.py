@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-9(axh6)e93_$ggxjijwkw6ht6v%jpeo1pq8gsww%151i=h&t_n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -39,9 +39,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'users',
     'rest_framework',
+	'drf_spectacular',
+	'users',
+    'tournament',
+    'lobby',
+    'tournamentParticipants',
+    'tournamentPairings',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Backend API',
+    'DESCRIPTION': 'Transcendence Backend API',
+    'VERSION': '0.0.1',
+    'SERVE_INCLUDE_SCHEMA': True,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,7 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -83,7 +98,10 @@ DATABASES = {
         'NAME': 'db',
         'USER': 'superman',
         'PASSWORD': 'SUPERpassword',
-        'HOST': 'database',  # Use the service name defined in docker-compose.yml
+		# Use this service name when running via terminal
+		'HOST': 'localhost',
+		# Use the service name when running via docker-compose.yml
+        # 'HOST': 'database',
         'PORT': '5432',
     }
 }
@@ -111,13 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -126,5 +140,4 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
