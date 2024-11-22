@@ -19,3 +19,11 @@ SUPER USER for admin panel login credentials are
 Username: admin
 Password: admin
 ```
+
+# Regarding the host name for the Database, remember the following
+
+```
+# Use this service name when running backend via terminal
+'HOST': 'localhost',
+# Use the service name when running via docker-compose.yml
+```

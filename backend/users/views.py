@@ -41,8 +41,11 @@ class UserViewSet(viewsets.ViewSet):
     )
     def update(self, request, pk=None):
         user = get_object_or_404(User, pk=pk)
-        serializer = UserSerializer(user, data=request.data, partial=False)
+        serializer = UserSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        if 'profile_photo' in request.FILES:
+            profile_photo_data = request.FILES['profile_photo']
+            user.profile_photo = profile_photo_data
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -73,11 +76,12 @@ class UserViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['post'], url_path='verify-password')
     def verify_password(self, request):
-        username = request.data.get('username')
+        email = request.data.get('username')
         password = request.data.get('password')
-        user = get_object_or_404(User, username=username)
+        user = get_object_or_404(User, email=email)
         if user.check_password(password):
-            return Response({"message": "Password is correct"}, status=status.HTTP_200_OK)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"message": "Password is incorrect"}, status=status.HTTP_401_UNAUTHORIZED)
 
     @extend_schema(
@@ -100,6 +104,21 @@ class UserViewSet(viewsets.ViewSet):
     def details_by_username(self, request, username=None):
         user = get_object_or_404(User, username=username)
         serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        responses=UserSerializer,
+        description="GET endpoint to get user details by email."
+    )
+    @action(detail=False, methods=['get'], url_path='details-by-email/(?P<email>.+)')
+    def details_by_email(self, request, email=None):
+        print('we entered the search by email function')
+        user = get_object_or_404(User, email=email)
+        print("User is: \n")
+        print(user)
+        serializer = UserSerializer(user)
+        print("Serialize.data is: \n")
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GameViewSet(viewsets.ViewSet):

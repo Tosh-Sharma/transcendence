@@ -10,17 +10,19 @@ services:
       POSTGRES_DB: db
     ports:
       - "5432:5432"
-
-  backend:
-    build: backend
-    container_name: django
-    command: >
-      sh -c "./wait-for-it.sh database:5432 -- 
-             python manage.py migrate &&
-             gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --certfile=cert.pem --keyfile=key.pem"
     volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - database
+      - /Users/toshsharma/Documents/42cursus/transcendence/backend/dbdata:/var/lib/postgresql/data
+
+  # backend:
+  #   build: backend
+  #   container_name: django
+  #   command: >
+  #     sh -c "./wait-for-it.sh database:5432 --
+  #            python manage.py migrate &&
+  #            gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --certfile=cert.pem --keyfile=key.pem"
+  #   volumes:
+  #     - ./backend:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - database
